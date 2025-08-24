@@ -9,6 +9,7 @@ If creating a blank file, you'll need to add your own RSS feeds - PodFetch can d
 Podcastindex.org is a good search resource for this.
 
 The script should run on any system that has Python installed.
+
 On a mac, change the script's extension to .command, make it executable, and it will run with a double click.
 Linux is probably similar.
 Windows; I don't know. Run it how you usually run a python program.
