@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<opml version="1.0">
+  <head>
+    <title>Example</title>
+  </head>
+  <body>
+    <outline type="rss" title="Mr Spike's Bedtime Stories" xmlUrl="https://anchor.fm/s/5f0e806c/podcast/rss"/>
+    <outline type="rss" title="BBC News" xmlUrl="https://podcast.voice.api.bbci.co.uk/rss/audio/p002vsmz?api_key=JqAy8fGqi8lpxLsr3WaGxyG31AZ5URMr"/>
+  </body>
+</opml>
