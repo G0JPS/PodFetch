@@ -5,6 +5,7 @@
 import os
 import sys
 import xml.etree.ElementTree as ET
+from xml.dom import minidom
 import urllib.request
 import re
 import glob
@@ -45,6 +46,28 @@ def clear_screen():
 	# For macOS and Linux
 	else:
 		_ = os.system('clear')
+
+# Function to save opml files with nice indentations
+def save_pretty_xml(element, file_path):
+	"""Saves an ElementTree element to a file with proper indentation and no extra line feeds."""
+	# Convert the ElementTree to a string
+	xml_string = ET.tostring(element, encoding='utf-8', xml_declaration=True)
+	
+	# Parse the string with minidom for pretty-printing
+	dom = minidom.parseString(xml_string)
+	
+	# Get the pretty-printed XML as a string
+	pretty_xml = dom.toprettyxml(indent="  ")
+	
+	# Remove extra blank lines
+	lines = pretty_xml.split('\n')
+	non_empty_lines = [line for line in lines if line.strip()]
+	cleaned_xml = '\n'.join(non_empty_lines)
+	
+	# Write the formatted string to the file
+	with open(file_path, "w", encoding='utf-8') as f:
+		f.write(cleaned_xml)
+
 
 def get_opml_files(directory):
 	# Find all files ending with .opml in a given directory and return a list of their full paths.
@@ -117,7 +140,10 @@ def add_podcast_to_opml(opml_path):
 			body = ET.SubElement(root, 'body')
 
 		new_outline = ET.SubElement(body, 'outline', type='rss', title=podcast_title, xmlUrl=podcast_url)
-		tree.write(opml_path, encoding='utf-8', xml_declaration=True)
+		
+		# Replace tree.write() with the call to save_pretty_xml
+		save_pretty_xml(root, opml_path)
+		
 		print(f"{Colors.GREEN}Successfully added '{podcast_title}' to the OPML file!{Colors.RESET}")
 	except Exception as e:
 		print(f"{Colors.YELLOW}Error adding podcast:{Colors.RESET} {e}")
@@ -168,7 +194,7 @@ def remove_podcast_from_opml(opml_path):
 			for outline in body.findall('outline'):
 				if outline.get('title') == podcast_to_remove['title']:
 					body.remove(outline)
-					tree.write(opml_path, encoding='utf-8', xml_declaration=True)
+					save_pretty_xml(root, opml_path)
 					print(f"{Colors.GREEN}Successfully removed '{podcast_to_remove['title']}'.{Colors.RESET}")
 					break
 			else:
@@ -212,8 +238,9 @@ def create_new_opml_file():
 		ET.SubElement(head_elem, 'title').text = filename.replace('.opml', '')
 		ET.SubElement(opml_template, 'body')
 
-		tree = ET.ElementTree(opml_template)
-		tree.write(file_path, encoding='utf-8', xml_declaration=True)
+		# Use the new function to save the pretty-printed XML
+		save_pretty_xml(opml_template, file_path) 
+
 		print(f"{Colors.GREEN}Successfully created new OPML file: '{filename}'!{Colors.RESET}")
 	except Exception as e:
 		print(f"{Colors.YELLOW}Error creating file:{Colors.RESET} {e}")
